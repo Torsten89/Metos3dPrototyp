@@ -36,9 +36,10 @@
 			<p>The surprising event, that one device was faster with Java than with C with the mathematical function is probably only due to the fact,
 			   that the Java compiler was lucky to find a really good optimization. Beside, no objects were created in the function, so the garbage collector was for free this time.
 			</p>
-			<p>But you can see, that the gap between Java and C becomes smaller with new Android versions. Android is making its Dalvik faster
-			   and since Android 5.0 Dalvik has the ability to compile frequently used bytecode of the virtual machine into native machine code dynamically,
-			   which is known as just-in-time compilation. So the third disadvantage disappears. <b>Nevertheless native C programs will always be faster
+			<p>But you can see, that the gap between Java and C becomes smaller with new Android versions. Android is making its Dalvik Virtual Machine faster
+			   and since Android 5.0 it is replaced by an Android Runtime, which does ahead-of-time compilation (the Bytecode of an App is translated into machine code
+			   during the installation on a device). Doing two different compilation processes has of course a probability of producing a not as efficient translation than one,
+			   but the third disadvantage becomes much smaller. <b>Nevertheless native C programs will always be faster
 			   than Java programs in general</b>.
 			</p>
 			

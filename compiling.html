@@ -13,7 +13,7 @@
 			The only thing I did, was pressing the launch-button in Eclipse and be delighted by the result of my program.
 			So this article is about how machines comes to the joy of understanding our source code. It covers Java, Android and C.<br>
 			
-			<h4 id="Java">Java<a href="http://openbook.rheinwerk-verlag.de/javainsel/javainsel_01_002.html" class="footnote"><sup>1</sup></a></h4>
+			<h4>Java<a href="http://openbook.rheinwerk-verlag.de/javainsel/javainsel_01_002.html" class="footnote"><sup>1</sup></a><span id="Java" class="anchor"/></h4>
 			Java source code is compiled into Bytecode. The Bytecode gets executed by a Java Virtual Machine (JVM), which is a Runtime Interpreter.
 			A JVM is build upon an imaginary processor, which communicates and translates between the Bytecode, the operation system (os) and it's hardware,
 			on which it should run.
@@ -27,19 +27,31 @@
 			<p><img src="pictures/compiling/JIT_compiler.png" alt="JIT-compiler"/></p>
 			So the advantage of portability is obtained and the disadvantage of Bytecode is eased.
 			
-			
-			<h4 id="Android">Android<a href="http://developer.android.com" class="footnote"><sup>2</sup></a></h4>
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->			
+			<h4>Android<a href="http://developer.android.com" class="footnote"><sup>2</sup></a><span id="Android" class="anchor"/></h4>
 			The basics of Android Apps will not be discussed here. Please use the <a href="http://developer.android.com/training/index.html">offical developer guide</a> for that.
 			
 			<p>Basically Android Apps (apk) are based on Java. But Android uses the Davlik Virtual Machine instead of the JVM as Runtime Interpreter.
 			   Funnily Java source code is translated into Java Bytecode first anyway and then the Java Bytecode is translated into Dalvik Bytecode.
-			   But packing an apk is more than compiling Java source code. Below is an picture, which gives an overview. Details are <a href="http://developer.android.com/sdk/installing/studio-build.html">here</a>.
+			   But packing an apk is more than compiling Java source code. Below is a picture, which gives an overview. Details are <a href="http://developer.android.com/sdk/installing/studio-build.html">here</a>.
 			</p>
 			<p><img src="http://developer.android.com/images/build.png" alt="packing an apk"/></p>
+			<p>Android uses <a href="http://developer.android.com/tools/building/plugin-for-gradle.html"><b>Gradle</b></a> as build toolkit for packing the apk.
+			   Gradle can be compared to the GNU Build System. Dependencies of the project and custom build logic can be managed by it. Its four main tasks are:
+			</p>
+			<ul>
+				<li><i>assemble</i>: Builds project output</li>
+				<li><i>check</i>: Runs all kind of tests</li>
+				<li><i>run</i>: Runs assemble and check</li>
+				<li><i>clean</i>: Cleans</li>
+			</ul>
+			<p>For running correctly the build system assumes sensible defaults for the project structure and other build options, which can be customized.
+			   The build system is configured in a <i>build.gradle file</i>. Please refer to <a href="http://developer.android.com/sdk/installing/studio-build.html">Android Plugin for Gradle</a> for more information.
+			</p>
 			
 			
-			Ahead Compiler
-			<h4 id="C">C</h4>
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->			
+			<h4>C<span id="C" class="anchor"/></h4>
 		</div>
 	</body>
 </html>
