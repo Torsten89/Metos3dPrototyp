@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="js/myW3data.js"></script> 
+	</head>
+	
+	<body onload="myW3IncludeHTMLIndex();">
+		<div w3-include-html="index.html"></div>
+		
+		<div id="content">
+			<h4>About in short:</h4>
+			This website should record my approach of exporting <a href="http://metos3d.github.io/metos3d/">Metos3D</a> to Android.
+			This project is part of a module called "master-project" for master of computer science at <a href="https://www.uni-kiel.de/index-e.shtml">university of Kiel, Germany</a>.
+			
+			<h4>About <a href="http://metos3d.github.io/metos3d/">Metos3D</a>:</h4>
+			Metos3D is a collection of simulation software, models and data intended to be used for simulation and optimization of marine ecosystem models.
+			<p>It can be run using only the programming language <i>C</i> and <i><a href="https://www.mcs.anl.gov/petsc/">PETSc</a></i> (Portable, Extensible Toolkit for Scientific Computation).</p>
+			
+			<h4>Why this page?</h4>
+			First, I though this project is not too hard using the <a href="http://developer.android.com/ndk/guides/index.html">Android Native Developer Kit</a> (NDK).
+			<p>After many hours of trying and sheer mad googling I have realized, that it is way harder than I thought first, due to many reasons:
+			  <ul>
+			  	<li>I am not an expert in <i>C</i>-programming and build processes (one goal for me of this project is to learn such things :) )</li>
+			  	<li>The <i>NDK</i> is still under heavy development and not well documented. For example when I started the official developer guide to the <i>hello world programm</i>, it stated that
+			  	every NDK-project must declare an Android.mk file and explained how it has to be build. But in the example project wasn't such a file. At that time the Android.mk file was already build automaticly from the Android gradle-build process.
+			  	(See <a href="http://stackoverflow.com/questions/36630091/android-mk-seems-not-to-exist">here</a>) </li>
+			  	<li><i>PETSc</i> is a huge toolkit with many dependencies. The installation scripts are an own big framework by themselves and are not supposed to be used with Android.
+			  	Android does not support the plane GNU Make tool and the configuration scripts are written in Python, which is not supported by Android either. So exporting <i>PETSc</i> on Android is a very difficult task.</li>
+			  </ul>
+			</p>
+			
+			<h2>Goal of this page:</h2>
+			<b>So the goal of this page is to sort and document the knowledge I gain during the project. I hope that other students, scientist, or somebody out there will profit from this gathered knowledge in the future. </b>
+			
+		</div>
+	</body>
+</html>
