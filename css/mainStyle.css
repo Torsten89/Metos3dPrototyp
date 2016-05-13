@@ -4,8 +4,11 @@ a.footnote {
 	text-decoration: none;
 }
 
-h4{ position:relative; }
-h4 span.anchor{ position:absolute; top:-64px;}
+h3, h4 { position:relative; }
+h3 span.anchor, h4 span.anchor {
+	position:absolute;
+	top:-64px;
+}
 
 h4, h3, h2{
 	margin-bottom: 0;

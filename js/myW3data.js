@@ -166,7 +166,7 @@ function myW3IncludeHTMLIndex() {
 	        		  
 	        		  if(activeTab == "compiling.html") {
 	        			  var ul = document.createElement('ul');
-	        			  var lis = ["Java", "Android", "C"];
+	        			  var lis = ["Java", "Android", "C", "Conclusion"];
 	        			  lis.forEach(function(elem, index, arr) {
 	        				 var li = document.createElement("li");
 	        				 console.log(elem)
