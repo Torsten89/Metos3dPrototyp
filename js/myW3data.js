@@ -169,7 +169,6 @@ function myW3IncludeHTMLIndex() {
 	        			  var lis = ["Java", "Android", "C", "Conclusion"];
 	        			  lis.forEach(function(elem, index, arr) {
 	        				 var li = document.createElement("li");
-	        				 console.log(elem)
 	        				 li.innerHTML = "<a href=#" + elem + ">" + elem + "</a>";
 	        				 ul.appendChild(li);
 	        			  });

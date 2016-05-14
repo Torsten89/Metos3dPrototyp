@@ -1,8 +1,7 @@
 @CHARSET "UTF-8";
 
-a.footnote {
-	text-decoration: none;
-}
+td { vertical-align: top; }
+a.footnote { text-decoration: none; }
 
 h3, h4 { position:relative; }
 h3 span.anchor, h4 span.anchor {
@@ -16,6 +15,10 @@ h4, h3, h2{
 
 p + ul  {
 	margin-top: -10px;
+}
+
+pre  {
+	margin-top: 0;
 }
 
 #content {
@@ -37,7 +40,8 @@ h1.header {
     border:1px solid #CCC;
 	background-color: #7fffd4;
 	font-size: 3em;
-	text-align: center
+	text-align: center;
+	z-index : 99;
 }
 
 ul.ulIndex {
