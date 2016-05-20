@@ -21,6 +21,12 @@ pre  {
 	margin-top: 0;
 }
 
+figure figcaption {
+  background-color: #E6E6E6;
+  font-style: italic;
+  font-size: 0.75em
+}
+
 #content {
 	margin-left:17%;
 	padding:1px 16px;
@@ -41,7 +47,7 @@ h1.header {
 	background-color: #7fffd4;
 	font-size: 3em;
 	text-align: center;
-	z-index : 99;
+	z-index : 10;
 }
 
 ul.ulIndex {

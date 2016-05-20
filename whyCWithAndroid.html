@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="js/myW3data.js"></script> 
+		<link rel="stylesheet" type="text/css" href="css/popup.css">
+		<script src="js/popup.js"></script> 
+		<script src="js/myW3data.js"></script>
 	</head>
 	
 	<body onload="myW3IncludeHTMLIndex();">
@@ -20,12 +22,21 @@
 			and third a self written large mathematical function with many multiplication and divisions.
 			<table>
 				<tr>
-					<td><a href="pictures/whyCWithAndroid/Java-vs-C-SHA1.jpg"><img src="pictures/whyCWithAndroid/Java-vs-C-SHA1.jpg" alt="Java-vs-C-SHA1" height="236" width="420"></a></td>
-					<td><a href="pictures/whyCWithAndroid/Java-vs-C-primes.jpg"><img src="pictures/whyCWithAndroid/Java-vs-C-primes.jpg" alt="Java-vs-C-primes" height="236" width="420"></a></td>
-					<td><a href="pictures/whyCWithAndroid/Java-vs-C-maththings.jpg"><img src="pictures/whyCWithAndroid/Java-vs-C-maththings.jpg" alt="Java-vs-C-maththings" height="236" width="420"></a></td>
+					<td><img src="pictures/whyCWithAndroid/Java-vs-C-SHA1.jpg" alt="Java-vs-C-SHA1" height="236" width="420" onclick="showPopup('speedUp1')"/>
+						<div id="speedUp1" class="popupHidden"><img src="pictures/whyCWithAndroid/Java-vs-C-SHA1.jpg" alt="Java-vs-C-SHA1"/></div>
+					</td>
+					<td><img src="pictures/whyCWithAndroid/Java-vs-C-primes.jpg" alt="Java-vs-C-primes" height="236" width="420" onclick="showPopup('speedUp2')"/>
+						<div id="speedUp2" class="popupHidden"><img src="pictures/whyCWithAndroid/Java-vs-C-primes.jpg" alt="Java-vs-C-primes"/></div>
+					</td>
+					<td><img src="pictures/whyCWithAndroid/Java-vs-C-maththings.jpg" alt="Java-vs-C-maththings" height="236" width="420" onclick="showPopup('speedUp3')"/>
+						<div id="speedUp3" class="popupHidden"><img src="pictures/whyCWithAndroid/Java-vs-C-maththings.jpg" alt="Java-vs-C-maththings"/></div>
+					</td>
 				</tr>
 			</table>
-			
+			<figure>
+				<figcaption>(Source: <a href="http://www.androidauthority.com/java-vs-c-app-performance-689081/">http://www.androidauthority.com/java-vs-c-app-performance-689081/</a>, dated: 17.05.2016)</figcaption>
+			</figure>
+	
 			<p>The reasons for Java being slower are stated as following:</p>
 			<ul>
 				<li>Java is run in a virtual machine. You can not run a virtual machine for free.</li>
@@ -61,5 +72,6 @@
 			   cross-compile the current version, special in mind of future changes and development.
 			</p>
 		</div>
+		 
 	</body>
 </html>

@@ -17,15 +17,19 @@
 			Java source code is compiled into Bytecode. The Bytecode gets executed by a Runtime Interpreter in a Java Virtual Machine (JVM).
 			A JVM is build upon an imaginary processor, which communicates and translates between the Bytecode, the operation system (os) and it's hardware,
 			on which it should run.
-			<p><img src="pictures/compiling/java_compilation.png" alt="Java compilation"></p>
-			This has the advantage, that the compilation process of source code is independent of the underlying os and hardware.
+			
+			<img src="pictures/compiling/java_compilation.png" alt="Java compilation">
+			
+			<p>This has the advantage, that the compilation process of source code is independent of the underlying os and hardware.
 			But it is slower than running machine code directly, because the work of the hardware (e.g. to decode and execute instructions)
-			has to be repeated in the JVM.
+			has to be repeated in the JVM.</p>
 			<p>To ease this issue, the JVM has a Just In Time compiler (JIT). When some Bytecode is executed again and again (a so called hotspot),
 			   the JIT can compile Bytecode to machine code for the underlying os and its hardware during runtime.
 			</p>
-			<p><img src="pictures/compiling/JIT_compiler.png" alt="JIT-compiler"/></p>
-			So the advantage of portability is obtained and the disadvantage of Bytecode is eased.
+			
+			<img src="pictures/compiling/JIT_compiler.png" alt="JIT-compiler"/>
+			
+			<p>So the advantage of portability is obtained and the disadvantage of Bytecode is eased.</p>
 			
 <!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->			
 			<h4>Android<a href="http://developer.android.com" class="footnote"><sup>2</sup></a><span id="Android" class="anchor"/></h4>
@@ -35,7 +39,11 @@
 			   Funnily Java source code is translated into Java Bytecode first and then the Java Bytecode is translated into Dalvik Bytecode.
 			   But packing an apk is more than compiling Java source code. Below is a picture, which gives an overview. Details are <a href="http://developer.android.com/sdk/installing/studio-build.html">here</a>.
 			</p>
-			<p><img src="http://developer.android.com/images/build.png" alt="packing an apk"/></p>
+			
+			<figure>
+				<img src="http://developer.android.com/images/build.png" alt="packing an apk"/>
+				<figcaption>(Source: <a href="https://developer.android.com/studio/build/index.html">https://developer.android.com/studio/build/index.html</a>, dated: 17.05.2016)</figcaption>
+			</figure>
 			<p>Android uses <a href="http://developer.android.com/tools/building/plugin-for-gradle.html"><b>Gradle</b></a> as build toolkit for packing the apk.
 			   Gradle can be compared to the GNU Build System. Dependencies of the project and custom build logic can be managed by it. Its four main tasks are:
 			</p>
