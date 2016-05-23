@@ -157,25 +157,21 @@ function myW3IncludeHTMLIndex() {
 	          a.innerHTML = xhttp.responseText;
 	          z[i].parentNode.replaceChild(a, z[i]);
 	          
-	          //add active tab with own css syntax
+	          // add active tab with own css syntax
 	          var tabs = document.getElementById("index").getElementsByTagName("a");
 	          var activeTab = location.pathname.split("/").slice(-1)[0];
 	          for(i=0; i<tabs.length; i++){
 	        	  if(activeTab == tabs[i].getAttribute("href")){
 	        		  tabs[i].setAttribute("class", "active");
 	        		  
+	        		  // if any add sub elements
 	        		  if(activeTab == "compiling.html") {
-	        			  var ul = document.createElement('ul');
-	        			  var lis = ["Java", "Android", "C", "Conclusion"];
-	        			  lis.forEach(function(elem, index, arr) {
-	        				 var li = document.createElement("li");
-	        				 li.innerHTML = "<a href=#" + elem + ">" + elem + "</a>";
-	        				 ul.appendChild(li);
-	        			  });
-	        			  tabs[i].parentElement.appendChild(ul);
+	        			  addSubElements(tabs[i], ["Java", "Android", "C", "Conclusion"]);
+	        		  } else if(activeTab == "DiveIntoAndroidNDK.html") {
+	        			  addSubElements(tabs[i], ["JNI", "NDK basics", "Crash into NDK with Android Studio", "Dive into NDK with Eclipse"]);
 	        		  }
 	        		  break;
-	        	  }       	  
+	        	  }      
 	          }
 	        }
 	      }      
@@ -185,6 +181,18 @@ function myW3IncludeHTMLIndex() {
 	    }
 	  }
 	}
+
+function addSubElements(parentElem, lis) {
+	var ul = document.createElement('ul');
+	console.log("abc def".replace(/ /g,''));
+	  lis.forEach(function(elem, index, arr) {
+		 var li = document.createElement("li");
+		 li.innerHTML = "<a href=#" + elem.replace(/ /g,'') + ">" + elem + "</a>";
+		 ul.appendChild(li);
+	  });
+	  parentElem.parentElement.appendChild(ul);	
+}
+
 function w3Http(target, readyfunc, xml, method) {
     var httpObj;
     if (!method) {method = "GET"; }

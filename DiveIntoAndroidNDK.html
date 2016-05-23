@@ -2,6 +2,11 @@
 <html>
 	<head>
 		<script src="js/myW3data.js"></script> 
+		<script type="text/javascript" src="js/syntaxHighlighter/shCore.js"></script> 
+		<script type="text/javascript" src="js/syntaxHighlighter/shBrushJava.js"></script>
+		<script type="text/javascript" src="js/syntaxHighlighter/shBrushCpp.js"></script>
+		<link href="js/syntaxHighlighter/shCore.css" rel="stylesheet" type="text/css" />
+		<link href="js/syntaxHighlighter/shThemeDefault.css" rel="stylesheet" type="text/css" />
 	</head>
 	
 	<body onload="myW3IncludeHTMLIndex();">
@@ -12,17 +17,158 @@
 			After we have realized that compilation of <i>C</i> and <i>Java</i> is done in complete different worlds,
 			we want to dive smoothly into the <a href="https://developer.android.com/ndk/guides/index.html">Android NDK</a> (native developer kit),
 			which combines these two worlds within an Android application. First we are going to take a glance at the Java Native Interface (JNI), 
-			which lets us call <i>C-functions</i> within Java. Second the NDK basics will be explained. After that I tried to dive in with a little example-project in Android Studio
+			which lets us call C-functions within Java. Second the NDK basics will be explained. After that I tried to dive in with a little example-project in Android Studio
 			- and crashed really frustrating. Finally I tried the same with Eclipse and become happy again :)
+			My full example project can be found <a href="https://github.com/Torsten89/DiveIntoAndroidNDKWithEclipse">here</a>
+			and is inspired by <a href="https://newcircle.com/s/post/1153/introduction_to_ndk">this</a>.
 			
-			<h4>Java Native Interface (JNI)</h4>
+			<h4>Java Native Interface (JNI)<span id="JNI" class="anchor"/></h4>
+			We have already seen <a href="compiling.html">here</a> that Java code runs within a VM and therefore some translation for the concrete underlying platform have to exist.
+			Among others this is done with JNI, which lets us call C/C++ within Java code and vice versa.
 			
-			<h4>NDK basics</h4>
+			<p><img src="pictures/DiveIntoAndroidNDK/Java_Compilation_and_JNI.png" alt="Java compilation and JNI"/></p>
 			
-			<h4>Crash into NDK with Android Studio</h4>
+			<p/>For example reading a file from hardware depends obviously on the hardware it is stored in. So the Java <code>read()</code>-method from the class <code>FileInputStream</code>
+			   is kind of an <i>abstract method</i> which gets implemented in a native language. We will explore this concept with a native fibonacci method. Fib(n) is defined as:
+			   <i>f<sub>1</sub>=f<sub>2</sub>=1</i> and <i>f<sub>n</sub>=f<sub>n-1</sub>+f<sub>n-2</sub> for n>2</i>. The declaration in Java is done as the following:
+			<pre class="brush: java">public native long calcFib(long n);</pre>
+			<p/>The <code>native</code>-keyword defines that the implementation of this method is done in a native language. And our implementation in C is here:
+			<pre class="brush: c">
+#include "masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib.h"
+
+static jlong fib(jlong n) {
+    return n <= 0 ? 0 : n == 1 ? 1 : fib(n - 1) + fib(n - 2);
+}
+
+JNIEXPORT jlong JNICALL Java_masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib_calcFib
+  (JNIEnv *env, jobject o, jlong n) {
+    return fib(n);
+}
+			</pre>
+			<p/>The second method is our implementation of the above native function. Per convention its name <b>has to start with "Java_",
+			followed by the full qualified name of the function, which gets implemented. Dots have to be replaced with "_".</b> So the function is in a class <code>Native1Fib</code>,
+			which lays in the package <code>masterproject.studentAtUniversityKiel.knauf.torsten</code>. <code>JNIEXPORT</code> and <code>JNICALL</code> are just macros,
+			which help linking Java and C code together. <code>jlong</code> is the matching C-type for Java's <code>long</code>. This mapping is necessary,
+			because in Java long has always the size of 64bit, while in C the size of long can be different for different hardware.
+			Therefore <code>jlong</code> ensures the size of 64bit in C. More mappings are shown <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/types.html#wp9502">here</a>.
+			<code>JNIEnv *env</code> is a pointer, through which integration with the Java VM is possible. Because our function is not static, <code>jobject o</code> contains a reference
+			of the calling Java Object. If it would have been a static function, <code>jobject o</code> would be replaced through <code>jclass clazz</code>, which is a reference of the calling class.
+			And finally <code>jlong n</code> contains the parameter of the function. We do the real work in a different method, because
+			coping JNIEnv *env and jobject o in every recursive call would be unnecessary work!
 			
-			<h4>Dive into NDK with Eclipse</h4>
+			<p/>It is obvious easy to mess up a function-header of a native implementation. <b><a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javah.html">javah</a></b>
+			is a tool, which generates a C-header file with the needed function-headers from a compiled Java class for every native-function.
+			<code>javah masterproject/studentAtUniversityKiel/knauf/torsten/Native1Fib</code>
+			generates the header file beneath, which is included in our C-implementation for helping with the function-header. (I think, the need for calling from the source directory,
+			so that the package name doesn't get messed up, is poor handcraft, but that's the way it is.)
+			<pre class="brush: c">
+/* DO NOT EDIT THIS FILE - it is machine generated */
+#include &lt;jni.h&gt;
+/* Header for class masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib */
+
+#ifndef _Included_masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib
+#define _Included_masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Class:     masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib
+ * Method:    calcFib
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib_calcFib
+  (JNIEnv *, jobject, jlong);
+
+#ifdef __cplusplus
+}
+#endif
+#endif
 			
+			</pre>
+			
+			<p/>After building the <i>C-library</i> we have to tell within the Java class of the native function, that an implementation can be found in it.
+			So here is how the full class looks like, where <i>libmasterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib.so</i> is the name of our builded library:
+<pre class="brush: java">
+package masterproject.studentAtUniversityKiel.knauf.torsten;
+
+public class Native1Fib implements CanCalcFib{
+    public native long calcFib(long n);
+
+    static {
+        System.loadLibrary("masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib");
+    }
+}
+</pre>			
+			At runtime when a native function in Java is called for the first time, the Java VM searches in the environmental variable <code>LD_LIBRARY_PATH</code> for a
+			corresponding native implementation and than redirects every call in the future to it. If no native implementation was found a
+			<code>java.lang.UnsatisfiedLinkError</code> exception is thrown.
+			
+			
+			<p/><b>That approach has two disadvantages:</b>
+				<ul>
+					<li>A possible runtime error at first native function call is unsatisfying.</li>
+					<li>When you have many native functions you definetly don't want to change package names. You forget easily to change headers of
+						corresponding native implementation and changing it for <b>every</b> native implementation is no fun at all!
+					</li>
+				</ul>
+			
+			<p/>Luckily <b><i>C++</i> comes with namespaces</b>. So we can define a namespace of the package and rewrite our C implementation as beneath:
+				
+			<pre class="brush: c">
+#include &lt;jni.h&gt;
+
+namespace masterproject_studentAtUniversityKiel_knauf_torsten {
+
+	static jlong fib(jlong n) {
+		return n <= 0 ? 0 : n == 1 ? 1 : fib(n - 1) + fib(n - 2);
+	}
+
+	static jlong calcFib(JNIEnv *env, jobject o, jlong n) {
+		return fib(n);
+	}
+
+	static JNINativeMethod method_table[] = {
+			{"calcFib", "(J)J", (void *) calcFib}
+	};
+}
+
+
+using namespace masterproject_studentAtUniversityKiel_knauf_torsten;
+
+extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
+{
+    JNIEnv* env;
+    if (vm->GetEnv(reinterpret_cast&lt;void**&gt;(&env), JNI_VERSION_1_6) != JNI_OK) {
+        return -1;
+    } else {
+    	jclass clazz = env->FindClass("masterproject/studentAtUniversityKiel/knauf/torsten/Native2Fib");
+    	if(clazz) {
+    		env->RegisterNatives(clazz, method_table, sizeof(method_table) / sizeof(method_table[0]));
+    		env->DeleteLocalRef(clazz);
+    		return JNI_VERSION_1_6;
+    	}
+    }
+
+    return -1;
+}	
+			</pre>
+			
+			<p/> The <code>method_table</code>-array contains one entry for every native method. The first argument is the name of the coresponding Java function.
+			The second contains a String, which encodes the function signature. Within the parentheses stand the arguments (J for jlong) and after that the result type
+			(once again J for jlong). The third argument is a pointer to the C/C++ implementation.
+			<p/>When the library is loaded into the Java VM, the <code>JNI_OnLoad</code>-function gets executed directly.
+			It finds our Java Class and maps the functions within the <code>method_table</code>. This way a possible exception is thrown earlier (which is a good thing)
+			and we got rid of the nasty function-headers. Besides this way is also a little bit faster, which we will see later.
+			
+			
+			<h4>NDK basics<span id="NDKbasics" class="anchor"/></h4>
+			
+			<h4>Crash into NDK with Android Studio<span id="CrashintoNDKwithAndroidStudio" class="anchor"/></h4>
+			
+			<h4>Dive into NDK with Eclipse<span id="DiveintoNDKwithEclipse" class="anchor"/></h4>
+			
+			
+			<script type="text/javascript">SyntaxHighlighter.all();</script>
 		</div>
 	</body>
 </html>
