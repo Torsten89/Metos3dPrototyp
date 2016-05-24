@@ -45,16 +45,23 @@ JNIEXPORT jlong JNICALL Java_masterproject_studentAtUniversityKiel_knauf_torsten
     return fib(n);
 }
 			</pre>
-			<p/>The second method is our implementation of the above native function. Per convention its name <b>has to start with "Java_",
-			followed by the full qualified name of the function, which gets implemented. Dots have to be replaced with "_".</b> So the function is in a class <code>Native1Fib</code>,
-			which lays in the package <code>masterproject.studentAtUniversityKiel.knauf.torsten</code>. <code>JNIEXPORT</code> and <code>JNICALL</code> are just macros,
-			which help linking Java and C code together. <code>jlong</code> is the matching C-type for Java's <code>long</code>. This mapping is necessary,
-			because in Java long has always the size of 64bit, while in C the size of long can be different for different hardware.
-			Therefore <code>jlong</code> ensures the size of 64bit in C. More mappings are shown <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/types.html#wp9502">here</a>.
-			<code>JNIEnv *env</code> is a pointer, through which integration with the Java VM is possible. Because our function is not static, <code>jobject o</code> contains a reference
+		<ul>
+			<li>The second method is our implementation of the above native function. Per convention its name <b>has to start with "Java_",
+				followed by the full qualified name of the function, which gets implemented. Dots have to be replaced with "_".</b> So the function is in a class <code>Native1Fib</code>,
+				which lays in the package <code>masterproject.studentAtUniversityKiel.knauf.torsten</code>.
+			</li>
+			<li><code>JNIEXPORT</code> and <code>JNICALL</code> are just macros, which help linking Java and C code together.</li>
+			<li><code>jlong</code> is the matching C-type for Java's <code>long</code>. This mapping is necessary,
+				because in Java long has always the size of 64bit, while in C the size of long can be different for different hardware.
+				Therefore <code>jlong</code> ensures the size of 64bit in C. More mappings are shown <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/types.html#wp9502">here</a>.
+			</li>
+			<li><code>JNIEnv *env</code> is a pointer, through which integration with the Java VM is possible. Because our function is not static, <code>jobject o</code> contains a reference
 			of the calling Java Object. If it would have been a static function, <code>jobject o</code> would be replaced through <code>jclass clazz</code>, which is a reference of the calling class.
-			And finally <code>jlong n</code> contains the parameter of the function. We do the real work in a different method, because
-			coping JNIEnv *env and jobject o in every recursive call would be unnecessary work!
+			</li>
+			<li>And finally <code>jlong n</code> contains the parameter of the function. We do the real work in a different method, because
+				coping JNIEnv *env and jobject o in every recursive call would be unnecessary work!
+			</li>
+		</ul>
 			
 			<p/>It is obvious easy to mess up a function-header of a native implementation. <b><a href="http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javah.html">javah</a></b>
 			is a tool, which generates a C-header file with the needed function-headers from a compiled Java class for every native-function.
@@ -162,10 +169,63 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 			
 			
 			<h4>NDK basics<span id="NDKbasics" class="anchor"/></h4>
+			Because Android is basically Java, we can use JNI in Android.
+		<div><span style="float: right;"><i>Android.mk</i><br/><img src="pictures/DiveIntoAndroidNDK/Android_mk.png" alt="Android.mk" border="1px"/></span>
+			<p>Furthermore Android even supports us with compiling our <i>C/C++</i>-code for different device-architectures.
+			   To the right is a custom <i>Android.mk</i>-file, which provides information for an existing makefile from Android.
 			
-			<h4>Crash into NDK with Android Studio<span id="CrashintoNDKwithAndroidStudio" class="anchor"/></h4>
+			It has to start with <code>LOCAL_PATH := </code>. $(call my-dir) returns the directory of the Android.mk-file.
+			After that native libraries can be declared in blocks:
+		<ul>
+			<li>A block should start with <code>include $(CLEAR_VARS)</code>, which cleans all set local variables except the LOCAL_PATH.</li>
+			<li><code>LOCAL_SRC_FILES</code> is a list of all source files, which should be bound to a library.</li>
+			<li><code>LOCAL_MODULE</code> declares a name for the library.</li>
+			<li>Optional compiler-flags (<code>LOCAL_CFLAGS += -I<path></code>) or references of needed libraries (<code>LOCAL_STATIC_LIBRARIES += </code>)
+				and many more can be specified.
+			</li>
+			<li>Finally <code>include $(BUILD_SHARED_LIBRARY)</code> states to build a shared library with the set variables.</li>
+		</ul>
+			Arbitrary such blocks can be written and also calling sub-Android.mk-files from different directories is possible. More details can  be found at
+			<a href="https://developer.android.com/ndk/guides/android_mk.html">Android.mk</a>.
+		</div>
+		
+		<div><span style="float: right;"><i>Application.mk</i><br/><img src="pictures/DiveIntoAndroidNDK/Application_mk.png" alt="Application.mk" border="1px"/></span>
+			<p/><i>Exact one Application.mk</i>-file can also optionally be configured in the same directory as the Android.mk-file.
+			General common settings for all libraries to be build can be set here. For detailed explanations see
+			<a href="https://developer.android.com/ndk/guides/application_mk.html">Application.mk</a>.
+			To the right is specified that the libraries should be build for <i>armeabi</i>-architecture. <i>ABI</i> stands for Application Binary Interface.
+			When this is set to <i>all</i> the libraries will be compiled for all common Android architectures
+			(that's so far armeabi, armeabi-v7a, arm64-v8a, x86, x86_64, mips and mips64).
+		</div>
+
+		After providing these two files, running <b>ndk-build</b>, which resides in <i>Android/Sdk/ndk-bundle</i>, in the directory of the Android.mk-file
+		does the compilation for us. It calls a makefile provided by Android and integrates the information from the Application.mk and Android.mk files in it.	
+		This way we don't have to bother about cross-compiling for different or even future Android devices.
+		
+		<p/>When everything mentioned before is in a jni-directory, calling ndk-build leads to the following directory structure:
+		<img src="pictures/DiveIntoAndroidNDK/directoryStructureOfNDK-build.png" alt="directory structure of NDK-build"/>
 			
-			<h4>Dive into NDK with Eclipse<span id="DiveintoNDKwithEclipse" class="anchor"/></h4>
+		<p/>An own sub-directory is created for each architecture. In obj/local are the compiled binaries, which are used for debugging.
+		In libs the same libraries stripped of debug information are copied. These are the one which get included in the final .apk, because they are normally much smaller.	
+			
+		<h4>Dive into NDK with Eclipse<span id="DiveintoNDKwithEclipse" class="anchor"/></h4>
+		Per convention Android.mk has to reside in a jni-directory within the top-level of the projects directory-hierarchy.
+		With everything mentioned so far, there's not much more to consider.
+		So <a href="https://github.com/Torsten89/DiveIntoAndroidNDKWithEclipse">here's my dive into NDK project on github</a> and the application looks like this:
+		<table>
+			<tr>
+				<td><img src="pictures/DiveIntoAndroidNDK/App1.png" alt="App1"/></td>
+				<td><img src="pictures/DiveIntoAndroidNDK/App2.png" alt="App2"/></td>
+				<td><img src="pictures/DiveIntoAndroidNDK/App3.png" alt="App3"/></td>
+			</tr>
+		</table>
+		We compare a recursive Java implementation with the two native implementation discussed in the JNI section. Native1 is the first discussed C implementation
+		and Native2 the C++ variation. As expected the natives one are much faster than the Java one and the C++ variation is marginal faster,
+		due to its earlier native side mapping.
+
+
+		<h4>Crash into NDK with Android Studio<span id="CrashintoNDKwithAndroidStudio" class="anchor"/></h4>
+			
 			
 			
 			<script type="text/javascript">SyntaxHighlighter.all();</script>

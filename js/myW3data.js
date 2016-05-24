@@ -168,7 +168,7 @@ function myW3IncludeHTMLIndex() {
 	        		  if(activeTab == "compiling.html") {
 	        			  addSubElements(tabs[i], ["Java", "Android", "C", "Conclusion"]);
 	        		  } else if(activeTab == "DiveIntoAndroidNDK.html") {
-	        			  addSubElements(tabs[i], ["JNI", "NDK basics", "Crash into NDK with Android Studio", "Dive into NDK with Eclipse"]);
+	        			  addSubElements(tabs[i], ["JNI", "NDK basics", "Dive into NDK with Eclipse", "Crash into NDK with Android Studio"]);
 	        		  }
 	        		  break;
 	        	  }      
