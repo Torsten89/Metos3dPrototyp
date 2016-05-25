@@ -22,8 +22,8 @@
 			My full example project can be found <a href="https://github.com/Torsten89/DiveIntoAndroidNDKWithEclipse">here</a>
 			and is inspired by <a href="https://newcircle.com/s/post/1153/introduction_to_ndk">this</a>.
 			
-			<h4>Java Native Interface (JNI)<span id="JNI" class="anchor"/></h4>
-			We have already seen <a href="compiling.html">here</a> that Java code runs within a VM and therefore some translation for the concrete underlying platform have to exist.
+		<h4>Java Native Interface (JNI)<span id="JNI" class="anchor"/></h4>
+			We have already seen <a href="compiling.html">here</a> that Java code runs within a VM and therefore some translation for the concrete underlying platform has to exist.
 			Among others this is done with JNI, which lets us call C/C++ within Java code and vice versa.
 			
 			<p><img src="pictures/DiveIntoAndroidNDK/Java_Compilation_and_JNI.png" alt="Java compilation and JNI"/></p>
@@ -32,7 +32,8 @@
 			   is kind of an <i>abstract method</i> which gets implemented in a native language. We will explore this concept with a native fibonacci method. Fib(n) is defined as:
 			   <i>f<sub>1</sub>=f<sub>2</sub>=1</i> and <i>f<sub>n</sub>=f<sub>n-1</sub>+f<sub>n-2</sub> for n>2</i>. The declaration in Java is done as the following:
 			<pre class="brush: java">public native long calcFib(long n);</pre>
-			<p/>The <code>native</code>-keyword defines that the implementation of this method is done in a native language. And our implementation in C is here:
+			
+			<p/>The <code>native</code>-keyword defines that the implementation of this method is done in a native language. And our implementation in C is:
 			<pre class="brush: c">
 #include "masterproject_studentAtUniversityKiel_knauf_torsten_Native1Fib.h"
 
@@ -46,7 +47,7 @@ JNIEXPORT jlong JNICALL Java_masterproject_studentAtUniversityKiel_knauf_torsten
 }
 			</pre>
 		<ul>
-			<li>The second method is our implementation of the above native function. Per convention its name <b>has to start with "Java_",
+			<li>The second method is our implementation of the above native function. <b>Per convention its name has to start with "Java_",
 				followed by the full qualified name of the function, which gets implemented. Dots have to be replaced with "_".</b> So the function is in a class <code>Native1Fib</code>,
 				which lays in the package <code>masterproject.studentAtUniversityKiel.knauf.torsten</code>.
 			</li>
@@ -56,7 +57,8 @@ JNIEXPORT jlong JNICALL Java_masterproject_studentAtUniversityKiel_knauf_torsten
 				Therefore <code>jlong</code> ensures the size of 64bit in C. More mappings are shown <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jni/spec/types.html#wp9502">here</a>.
 			</li>
 			<li><code>JNIEnv *env</code> is a pointer, through which integration with the Java VM is possible. Because our function is not static, <code>jobject o</code> contains a reference
-			of the calling Java Object. If it would have been a static function, <code>jobject o</code> would be replaced through <code>jclass clazz</code>, which is a reference of the calling class.
+				of the calling Java Object. If it would have been a static function, <code>jobject o</code> would be replaced through <code>jclass clazz</code>,
+				which would be a reference of the calling class.
 			</li>
 			<li>And finally <code>jlong n</code> contains the parameter of the function. We do the real work in a different method, because
 				coping JNIEnv *env and jobject o in every recursive call would be unnecessary work!
@@ -198,7 +200,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 			(that's so far armeabi, armeabi-v7a, arm64-v8a, x86, x86_64, mips and mips64).
 		</div>
 
-		After providing these two files, running <b>ndk-build</b>, which resides in <i>Android/Sdk/ndk-bundle</i>, in the directory of the Android.mk-file
+		After providing these two files, running <b>ndk-build</b>, which resides in <i>Android/Sdk/ndk-bundle</i>, within the directory of the Android.mk-file
 		does the compilation for us. It calls a makefile provided by Android and integrates the information from the Application.mk and Android.mk files in it.	
 		This way we don't have to bother about cross-compiling for different or even future Android devices.
 		
@@ -208,8 +210,8 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		<p/>An own sub-directory is created for each architecture. In obj/local are the compiled binaries, which are used for debugging.
 		In libs the same libraries stripped of debug information are copied. These are the one which get included in the final .apk, because they are normally much smaller.	
 			
-		<h4>Dive into NDK with Eclipse<span id="DiveintoNDKwithEclipse" class="anchor"/></h4>
-		Per convention Android.mk has to reside in a jni-directory within the top-level of the projects directory-hierarchy.
+	<h4>Dive into NDK with Eclipse<span id="DiveintoNDKwithEclipse" class="anchor"/></h4>
+		Per convention Android.mk has to reside in a jni-directory within the top-level of the project's directory-hierarchy.
 		With everything mentioned so far, there's not much more to consider.
 		So <a href="https://github.com/Torsten89/DiveIntoAndroidNDKWithEclipse">here's my dive into NDK project on github</a> and the application looks like this:
 		<table>
@@ -224,10 +226,130 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		due to its earlier native side mapping.
 
 
-		<h4>Crash into NDK with Android Studio<span id="CrashintoNDKwithAndroidStudio" class="anchor"/></h4>
+<h4>NDK with Android Studio<span id="NDKwithAndroidStudio" class="anchor"/></h4>
+		I want to start this section with <b>why Android Studio is a better choice than Eclipse for Android programming:</b>
+		<ul>
+			<li><a href="http://android-developers.blogspot.de/2015/06/an-update-on-eclipse-android-developer.html">On 26 June 2015</a>
+				Android has officially ended support for Android Developer Tools (ADT) in Eclipse and states that everyone should migrate to Android Studio.
+				<p/><a href="https://marketplace.eclipse.org/content/android-development-tools-eclipse">ADT in Eclipse</a> obviously still gets developed,
+				as you can see on the latest update date. There is also <a href="https://marketplace.eclipse.org/content/andmore-development-tools-android%E2%84%A2">Andmore</a>
+				currently in beta development state, which includes Gradle-build and forks Google's ADT into eclipse. But very probably new features will need some time,
+				until they also found there way into Eclipse. Furthermore a cheeky boy (like me) could suspect,
+				that Google does some changes to its build-system from time to time, which unfortunately are incompatible with current Eclipse versions.
+			</li>
+			<li>It is well known that Eclipse lacks XML-power and is not good with virtual Android machines. In contrast Android Studio even has auto-completion
+				in its XML-editors and works well with its virtual Android machines.
+			</li>
+			<li>Android Studio's <a href="https://developer.android.com/studio/build/index.html">Gradle-build system</a> simplifies the building process, and make it way faster.
+				Including JUnit Tests is for free and things like continues integration should be no big problem with Gradle.
+				Furthermore dependency management like adding the <a href="https://developer.android.com/topic/libraries/support-library/index.html">Support Libraries</a>
+				is easy through adding 3 lines to the Grade-build script:
+				<pre><code>
+    dependencies {
+        compile "com.android.support:support-v4:18.0.+"
+    }
+				</code></pre>
+			</li>
+			<li>In the future Android devices will not only be smart phones. There will be more and more Apps for TV, cars, watches, cameras, notebooks, glasses...
+				Having one specialized IDE for all is priceless.
+			</li>
+		</ul>	
 			
-			
-			
+		<p/><b>So why did I dive in first with Eclipse?</b> The true answer is, I was too stupid for that. But in retroperspective I think this is natural, because
+		Android Studio is a huge tool. Diving in Android NDK with Android Studio, Gradle and C with no experiences in neither of them feels like
+		trying to build a sand castle using an excavator for the first time. 
+		<img src="" alt="(img not yet drawn)"/>
+		<ul>
+			<li>First someone has to understand that C and Java lives in their own world.</li>
+			<li>Than you have to understand how to combine these two worlds with JNI.</li>
+			<li>After that you have to understand how Android Apps are build.</li>
+			<li>You have to understand the Android NDK.</li>
+			<li>You have to understand basically Android's Gradle-build system.</li>
+			<li>While having to understand all that, <b>the biggest problem seems to me, that Android NDK is not yet sophisticated and still in heavy development.</b>
+				The <a href="https://developer.android.com/ndk/guides/index.html">documentation</a> describes how to integrate native code with an <i>Android.mk</i>-file
+				(dated 25.May 2016). But this is deprecated and in some
+				<a href="http://stackoverflow.com/questions/31979965/after-updating-android-studio-to-version-1-3-0-i-am-getting-ndk-integration-is">Gradle-build versions</a>
+				the building process even exits, when using the method of the official documentation,
+				with <code>Error:(50, 0) Error: NDK integration is deprecated in the current plugin...</code>.
+				Instead using a <a href="http://tools.android.com/tech-docs/android-ndk-preview">new experimental Gradle plugin for Android</a>
+				is recommended. They state themselves that it is <i>"only preview quality"</i>, <i>"There are many significant limitations"</i>
+				and that they <i>"anticipate making some additional incompatible changes along the way"</i>.
+				Beside that the actual Gradle-build has to be changed for that in many places manually. That overall situation seems not satisfying to me for "diving in".
+				Unfortunately I couldn't find out, when the experimental plugin should become stable.
+			</li>
+		</ul>
+		
+		Choosing the "old style" the principle of native support is exact the same in Android Studio as in Eclipse.
+		But my problem was, that I couldn't tell Gradle-build to include my builded native libraries to the final .apk.
+		
+		<p/>Luckily my student colleague found <a href="http://kvurd.com/blog/compiling-a-cpp-library-for-android-with-android-studio/">this article</a>,
+		which helped me to reconfigure the Gradle-build. It seems that before compiling the Java code the native libraries have to be zipped into *.jars,
+		which is done by the <i>nativeLibsToJar task</i>. For the compilation process the *.jars have also to be added in the dependencies.
+		But there are still some uncertainties which I hope to get answered on
+		<a href="http://stackoverflow.com/questions/37447811/what-is-the-magic-of-nativelibstojar">this stackoverflow question</a>.
+		
+		<p/>Running the <i>ndk-build script</i> can be automated through the <i>ndkBuild task</i>. Unfortunately it is not smart enough to detect,
+		if changes were made to the corresponding native code. So it re-compiles every time. To (un-)comment the task manually if (not) needed seems to be a good enough fix to me.
+		 
+		<p/>Here is the final <i>gradle.build</i>-file:
+		
+		<pre><code>apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "masterproject.student_at_university_kiel.knauf.torsten"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // for preventing (cheating) gradle-build to overwrite Android.mk with auto-generated Android.mk (default NdkCompile task)
+    sourceSets.main {
+        jni.srcDirs = [] //disable automatic ndk-build call
+        jniLibs.srcDir 'src/main/libs/' //integrate your libs from libs instead of jniLibs
+    }
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn(nativeLibsToJar)
+    }
+
+    task ndkBuild(type: Exec, description: 'compile native code') {
+        def ndkDir = "/home/expert/Android/Sdk/ndk-bundle"
+        workingDir "src/main/jni"
+        commandLine "$ndkDir/ndk-build"
+    }
+
+    task nativeLibsToJar(type: Zip, description: 'create a jar archive of the native libs') {
+        destinationDir file("$buildDir/native-libs")
+        baseName 'native-libs'
+        extension 'jar'
+        from fileTree(dir: 'libs', include: '**/*.so')
+        into 'lib/'
+    }
+    nativeLibsToJar.dependsOn {
+        ndkBuild  // comment that, when you don't want to rerun ndk-build script
+    }
+
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.4.0'
+}
+		</code></pre>
+		
+		The full Android Studio project can be found <a href="https://github.com/Torsten89/Dive-Into-Android-NDK">here</a>.
+		
 			<script type="text/javascript">SyntaxHighlighter.all();</script>
 		</div>
 	</body>
