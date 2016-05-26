@@ -281,18 +281,10 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		</ul>
 		
 		Choosing the "old style" the principle of native support is exact the same in Android Studio as in Eclipse.
-		But my problem was, that I couldn't tell Gradle-build to include my builded native libraries to the final .apk.
+		But my problem was, that I couldn't tell Gradle-build to include my builded native libraries to the final .apk. 
+		Here is the final <i>gradle.build</i>-file, which solved the problem:
 		
-		<p/>For preventing the Gradle-build process of generating an auto-build Android.mk-file (a new <i>feature</i> which is not told in the official documentation)
-		<code>sourceSets.main.jni.srcDirs</code> has to be set to empty and <code>sourceSets.main.jniLibs.srcDir</code> has to be set to the directory of the
-		native builded libraries. Running the ndk-build script builds them into <i>src/main/libs/</i>.
-		
-		<p/>Running the <i>ndk-build script</i> can be automated through the <i>ndkBuild task</i>. Unfortunately it is not smart enough to detect,
-		if changes were made to the corresponding native code. So it re-compiles every time. To (un-)comment the task manually if (not) needed seems to be a good enough fix to me.
-		 
-		<p/>Here is the final <i>gradle.build</i>-file:
-		
-		<pre><code>apply plugin: 'com.android.application'
+		<p/><pre><code>apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
@@ -336,7 +328,14 @@ dependencies {
 }
 		</code></pre>
 		
-		The full Android Studio project can be found <a href="https://github.com/Torsten89/Dive-Into-Android-NDK">here</a>.
+		<p/>For preventing the Gradle-build process of generating an auto-build Android.mk-file (a new <i>feature</i> which is not told in the official documentation)
+		<code>sourceSets.main.jni.srcDirs</code> has to be set to empty and <code>sourceSets.main.jniLibs.srcDir</code> has to be set to the directory of the
+		native builded libraries. Running the ndk-build script builds them into <i>src/main/libs/</i>.
+		
+		<p/>Running the <i>ndk-build script</i> can be automated through the <i>ndkBuild task</i>. Unfortunately it is not smart enough to detect,
+		if changes were made to the corresponding native code. So it re-compiles every time. To (un-)comment the task manually if (not) needed seems to be a good enough fix to me.
+		
+		<p/>The full Android Studio project can be found <a href="https://github.com/Torsten89/Dive-Into-Android-NDK">here</a>.
 		
 			<script type="text/javascript">SyntaxHighlighter.all();</script>
 		</div>
