@@ -283,11 +283,9 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		Choosing the "old style" the principle of native support is exact the same in Android Studio as in Eclipse.
 		But my problem was, that I couldn't tell Gradle-build to include my builded native libraries to the final .apk.
 		
-		<p/>Luckily my student colleague found <a href="http://kvurd.com/blog/compiling-a-cpp-library-for-android-with-android-studio/">this article</a>,
-		which helped me to reconfigure the Gradle-build. It seems that before compiling the Java code the native libraries have to be zipped into *.jars,
-		which is done by the <i>nativeLibsToJar task</i>. For the compilation process the *.jars have also to be added in the dependencies.
-		But there are still some uncertainties which I hope to get answered on
-		<a href="http://stackoverflow.com/questions/37447811/what-is-the-magic-of-nativelibstojar">this stackoverflow question</a>.
+		<p/>For preventing the Gradle-build process of generating an auto-build Android.mk-file (a new <i>feature</i> which is not told in the official documentation)
+		<code>sourceSets.main.jni.srcDirs</code> has to be set to empty and <code>sourceSets.main.jniLibs.srcDir</code> has to be set to the directory of the
+		native builded libraries. Running the ndk-build script builds them into <i>src/main/libs/</i>.
 		
 		<p/>Running the <i>ndk-build script</i> can be automated through the <i>ndkBuild task</i>. Unfortunately it is not smart enough to detect,
 		if changes were made to the corresponding native code. So it re-compiles every time. To (un-)comment the task manually if (not) needed seems to be a good enough fix to me.
@@ -314,31 +312,20 @@ android {
         }
     }
 
-    // for preventing (cheating) gradle-build to overwrite Android.mk with auto-generated Android.mk (default NdkCompile task)
+    // for preventing (cheating) gradle-build to overwrite Android.mk with auto-generated Android.mk (the default NdkCompile task)
     sourceSets.main {
         jni.srcDirs = [] //disable automatic ndk-build call
         jniLibs.srcDir 'src/main/libs/' //integrate your libs from libs instead of jniLibs
     }
 
     tasks.withType(JavaCompile) {
-        compileTask -> compileTask.dependsOn(nativeLibsToJar)
+        //compileTask -> compileTask.dependsOn(ndkBuild) // uncomment this to rebuild native code
     }
 
     task ndkBuild(type: Exec, description: 'compile native code') {
         def ndkDir = "/home/expert/Android/Sdk/ndk-bundle"
         workingDir "src/main/jni"
         commandLine "$ndkDir/ndk-build"
-    }
-
-    task nativeLibsToJar(type: Zip, description: 'create a jar archive of the native libs') {
-        destinationDir file("$buildDir/native-libs")
-        baseName 'native-libs'
-        extension 'jar'
-        from fileTree(dir: 'libs', include: '**/*.so')
-        into 'lib/'
-    }
-    nativeLibsToJar.dependsOn {
-        ndkBuild  // comment that, when you don't want to rerun ndk-build script
     }
 
 }
