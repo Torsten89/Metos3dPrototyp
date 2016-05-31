@@ -317,7 +317,7 @@ android {
     }
 
     task ndkBuild(type: Exec, description: 'compile native code') {
-        def ndkDir = "/home/expert/Android/Sdk/ndk-bundle"
+        def ndkDir = project.android.ndkDirectory
         workingDir "src/main/jni"
         commandLine "$ndkDir/ndk-build"
     }
