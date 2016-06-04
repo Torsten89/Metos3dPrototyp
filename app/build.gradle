@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "masterproject.student_at_university_kiel.knauf.torsten.metos3dPrototyp"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // for preventing (cheating) gradle-build to overwrite Android.mk with auto-generated Android.mk (the default NdkCompile task)
+    sourceSets.main {
+        jni.srcDirs = [] //disable automatic ndk-build call
+        jniLibs.srcDir 'src/main/libs/' //integrate your libs from libs instead of jniLibs
+    }
+
+    tasks.withType(JavaCompile) {
+        //compileTask -> compileTask.dependsOn(ndkBuild) // uncomment this to rebuild native code
+    }
+
+    task ndkBuild(type: Exec, description: 'compile native code') {
+        def ndkDir = project.android.ndkDirectory
+        workingDir "src/main/jni"
+        commandLine "$ndkDir/ndk-build"
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.4.0'
+}
