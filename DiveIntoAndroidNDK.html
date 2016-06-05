@@ -111,7 +111,7 @@ public class Native1Fib implements CanCalcFib{
 }
 </pre>			
 			At runtime when a native function in Java is called for the first time, the Java VM searches in the environmental variable <code>LD_LIBRARY_PATH</code> for a
-			corresponding native implementation and than redirects every call in the future to it. If no native implementation was found a
+			corresponding native implementation and then redirects every call in the future to it. If no native implementation was found a
 			<code>java.lang.UnsatisfiedLinkError</code> exception is thrown.
 			
 			
@@ -174,7 +174,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 			
 			<h4>NDK basics<span id="NDKbasics" class="anchor"/></h4>
 			Because Android is basically Java, we can use JNI in Android.
-		<div><span style="float: right;"><i>Android.mk</i><br/><img src="pictures/DiveIntoAndroidNDK/Android_mk.png" alt="Android.mk" border="1px"/></span>
+		<div><span style="float: right; padding:0 0 0 1em;"><i>Android.mk</i><br/><img src="pictures/DiveIntoAndroidNDK/Android_mk.png" alt="Android.mk" border="1px"/></span>
 			<p>Furthermore Android even supports us with compiling our <i>C/C++</i>-code for different device-architectures.
 			   To the right is a custom <i>Android.mk</i>-file, which provides information for an existing makefile from Android.
 			
@@ -193,7 +193,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 			<a href="https://developer.android.com/ndk/guides/android_mk.html">Android.mk</a>.
 		</div>
 		
-		<div><span style="float: right;"><i>Application.mk</i><br/><img src="pictures/DiveIntoAndroidNDK/Application_mk.png" alt="Application.mk" border="1px"/></span>
+		<div><span style="float: right; padding:0 0 0 1em;"><i>Application.mk</i><br/><img src="pictures/DiveIntoAndroidNDK/Application_mk.png" alt="Application.mk" border="1px"/></span>
 			<p/><i>Exact one Application.mk</i>-file can also optionally be configured in the same directory as the Android.mk-file.
 			General common settings for all libraries to be build can be set here. For detailed explanations see
 			<a href="https://developer.android.com/ndk/guides/application_mk.html">Application.mk</a>.
@@ -264,7 +264,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 		<img src="pictures/DiveIntoAndroidNDK/BeachBagger.png" alt="Build sand castle with an excavotor"/>
 		<ul>
 			<li>First someone has to understand that C and Java lives in their own world.</li>
-			<li>Than you have to understand how to combine these two worlds with JNI.</li>
+			<li>Then you have to understand how to combine these two worlds with JNI.</li>
 			<li>After that you have to understand how Android Apps are build.</li>
 			<li>You have to understand the Android NDK.</li>
 			<li>You have to understand basically Android's Gradle-build system.</li>
