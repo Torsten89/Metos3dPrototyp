@@ -1,8 +1,8 @@
 package masterproject.studentAtUniversityKiel.knauf.torsten.metos3dPrototyp;
 
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
-import android.net.Uri;
+import android.app.Activity;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,185 +15,63 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 public class MainActivity extends AppCompatActivity {
-    TextView tv;
     Button startButton;
-//"metos3d/arch/metos3d-simpack-N-DOP.exe"
+    TextView resultView;
+    Activity self;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.tv = (TextView) super.findViewById(R.id.tv);
+        this.self = this;
         this.startButton = (Button) super.findViewById(R.id.startMetos3d);
-
-        //String publicPathToMetos3d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/m3d";
-        String pathToM3d = getExternalFilesDir(null).getAbsolutePath()+"/m3d";
-
-        //copyExeInPrivateStorage(pathToM3d, pathToExe);
-
-        /*try {
-            copyDirectory(new File(publicPathToMetos3d), new File(pathToM3d));
-        } catch(IOException e) {
-            Log.d("HIER", "error copy dirs: "+e.toString());
-        }*/
-
-        final String pathToExe = getFilesDir().getPath()+"/metos3d-simpack-N-DOP.exe";
-        final String pathToOptionFile=pathToM3d+"/model/N-DOP/option/test.N-DOP.option.txt";
-
-        copyNewOptionFileFromAssets(pathToOptionFile);
-        tv.setText("exe: "+(new File(pathToExe)).exists()+" optionFile: "+(new File(pathToOptionFile)).exists());
-
+        this.resultView = (TextView) super.findViewById(R.id.tv);
         this.startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //String makeExecutable = "/system/bin/chmod 777 "+pathToExe;
-                //Log.d("HIER", executeCmd(makeExecutable));
-                Log.d("HIER", ""+(new File(pathToExe)).setExecutable(true));
-                tv.setText(executeCmd("."+pathToExe+" "+pathToOptionFile));
+
+                final String pathToM3d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/Metos3d";
+                final String pathToOptionFile = pathToM3d + "/model/N-DOP/option/test.N-DOP.option.txt";
+                final String nameOfExe = "metos3d-simpack-N-DOP.exe";
+                final String pathToExe = getFilesDir().getPath() + "/" + nameOfExe;
+                resultView.setText(executeCmd(pathToExe + " " + pathToOptionFile, pathToM3d));
+                //(new Metos3d(self, resultView)).execute();
+                /*} catch(ExceptionMetos3dNotInDownloads e) {
+                    resultView.setTextColor(Color.RED);
+                    resultView.setText(e.toString() + "\n\n Please put the folder there and restart this App");
+                }*/
             }
         });
     }
 
-    private void copyNewOptionFileFromAssets(String pathToOptionFile) {
-        File old = new File(pathToOptionFile);
-        if(!old.exists()) {
-            Log.d("HIER", "old does not exists");
-            return;
-        }
-        old.delete();
-        if(old.exists()) {
-            Log.d("HIER", "delete hasn't worked");
-            return;
-        }
-
-        AssetManager assetManager = super.getAssets();
-        String err="";
-        InputStream is=null;
-        OutputStream os=null;
-        try {
-            is = assetManager.open("test.N-DOP.option.txt");
-            File newFile = new File(pathToOptionFile);
-            os = new FileOutputStream(newFile);
-            copyFile(is, os);
-        } catch(IOException e) {
-            err=e.toString();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // NOOP
-                }
-            }
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    // NOOP
-                }
-            }
-        }
-        Log.d("HIER", "success replacing option File");
-    }
-
-    private void copyExeInPrivateStorage(String pathToM3d, String pathToExe) {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(new File(pathToM3d + "/metos3d-simpack-N-DOP.exe"));
-            os = new FileOutputStream(pathToExe);
-            copyFile(is, os);
-        } catch (IOException e) {
-            Log.d("HIER", "error copy exe: " + e.toString());
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    // NOOP
-                }
-            }
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
-                    // NOOP
-                }
-            }
-        }
-    }
-
-    private void copyFile(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int read;
-        while((read = in.read(buffer)) != -1){
-            out.write(buffer, 0, read);
-        }
-    }
-
-    public void copyDirectory(File sourceLocation , File targetLocation)
-            throws IOException {
-
-        if (sourceLocation.isDirectory()) {
-            if (!targetLocation.exists() && !targetLocation.mkdirs()) {
-                throw new IOException("Cannot create dir " + targetLocation.getAbsolutePath());
-            }
-
-            String[] children = sourceLocation.list();
-            for (int i=0; i<children.length; i++) {
-                copyDirectory(new File(sourceLocation, children[i]),
-                        new File(targetLocation, children[i]));
-            }
-        } else {
-
-            // make sure the directory we plan to store the recording in exists
-            File directory = targetLocation.getParentFile();
-            if (directory != null && !directory.exists() && !directory.mkdirs()) {
-                throw new IOException("Cannot create dir " + directory.getAbsolutePath());
-            }
-
-            InputStream in = new FileInputStream(sourceLocation);
-            OutputStream out = new FileOutputStream(targetLocation);
-
-            // Copy the bits from instream to outstream
-            byte[] buf = new byte[1024];
-            int len;
-            while ((len = in.read(buf)) > 0) {
-                out.write(buf, 0, len);
-            }
-            in.close();
-            out.close();
-        }
-    }
-
-    private String executeCmd(String c) {
+    private String executeCmd(String command, String workingDir) {
         StringBuffer result = new StringBuffer();
         try {
             String line;
-            Process p = Runtime.getRuntime().exec(c);
-            BufferedReader bri = new BufferedReader
-                    (new InputStreamReader(p.getInputStream()));
-            BufferedReader bre = new BufferedReader
-                    (new InputStreamReader(p.getErrorStream()));
-            while ((line = bri.readLine()) != null) {
+            Process p = Runtime.getRuntime().exec(command, null, new File(workingDir));
+            BufferedReader terminalOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader errorStream = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+            while ((line = terminalOutput.readLine()) != null) {
                 result.append(line+"\n");
             }
-            bri.close();
-            while ((line = bre.readLine()) != null) {
-                result.append("_myError_ "+line+"\n");
-            }
-            bre.close();
+            terminalOutput.close();
 
-            p.waitFor();
+            while ((line = errorStream.readLine()) != null) {
+                result.append("_myError_: "+line+"\n");
+            }
+            errorStream.close();
+
+            p.waitFor(); // That's ok because we are in an AsyncTask
         }
-        catch (Exception err) {
-            result.append("_myException_ "+err.toString()+"\n");
+        catch(Exception e) {
+            result.append("\n"+e.toString()+"\n");
         }
 
         return result.toString();

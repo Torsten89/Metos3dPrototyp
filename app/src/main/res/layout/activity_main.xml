@@ -19,6 +19,6 @@
         <TextView android:id="@+id/tv"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="Hello World!" />
+            android:text="Result will be placed here" />
     </ScrollView>
 </LinearLayout>
