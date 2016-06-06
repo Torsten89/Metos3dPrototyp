@@ -36,16 +36,19 @@ public class MainActivity extends AppCompatActivity {
         this.startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
-                final String pathToM3d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/Metos3d";
+                /*final String pathToM3d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/Metos3d";
                 final String pathToOptionFile = pathToM3d + "/model/N-DOP/option/test.N-DOP.option.txt";
                 final String nameOfExe = "metos3d-simpack-N-DOP.exe";
-                final String pathToExe = getFilesDir().getPath() + "/" + nameOfExe;
-                resultView.setText(executeCmd(pathToExe + " " + pathToOptionFile, pathToM3d));
-                //(new Metos3d(self, resultView)).execute();
-                /*} catch(ExceptionMetos3dNotInDownloads e) {
+                final String pathToExe = getFilesDir().getAbsolutePath() + "/" + nameOfExe;
+                File exe = new File(pathToExe);
+                Log.d("HIER", ""+exe.exists()+exe.setExecutable(true)+exe.length());
+                resultView.setText(executeCmd(pathToExe, null)); // + " " + pathToOptionFile, pathToM3d)); */
+                try {
+                    (new Metos3d(self, resultView)).execute();
+                } catch(ExceptionMetos3dNotInDownloads e) {
                     resultView.setTextColor(Color.RED);
                     resultView.setText(e.toString() + "\n\n Please put the folder there and restart this App");
-                }*/
+                }
             }
         });
     }
@@ -54,26 +57,30 @@ public class MainActivity extends AppCompatActivity {
         StringBuffer result = new StringBuffer();
         try {
             String line;
-            Process p = Runtime.getRuntime().exec(command, null, new File(workingDir));
+            Log.d("HIER", command);
+            Process p = Runtime.getRuntime().exec(command); //, null, new File(workingDir));
             BufferedReader terminalOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader errorStream = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
             while ((line = terminalOutput.readLine()) != null) {
-                result.append(line+"\n");
+                result.append(line + "\n");
             }
             terminalOutput.close();
 
             while ((line = errorStream.readLine()) != null) {
-                result.append("_myError_: "+line+"\n");
+                result.append("_myError_: " + line + "\n");
             }
             errorStream.close();
 
-            p.waitFor(); // That's ok because we are in an AsyncTask
-        }
-        catch(Exception e) {
-            result.append("\n"+e.toString()+"\n");
+            Log.d("HIER", ""+p.waitFor()); // That's ok because we are in an AsyncTask
+        } catch (Exception e) {
+            result.append("\n" + e.toString() + "\n");
         }
 
-        return result.toString();
+        String r = result.toString();
+        Log.d("HIER", "HI"+r);
+        return r;
     }
 }
+
+

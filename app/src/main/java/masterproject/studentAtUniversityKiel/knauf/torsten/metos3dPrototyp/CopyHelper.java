@@ -24,6 +24,7 @@ public class CopyHelper {
         }
     }
 
+    //untested after "refactoring" - shame on me!
     public static void copyDir(File src, File target) throws IOException{
         if (src.isDirectory()) {
             if (!target.exists() && !target.mkdirs())
@@ -42,6 +43,7 @@ public class CopyHelper {
         }
     }
 
+    //untested after "refactoring" - shame on me!
     public static void copyFileFromAsset(AssetManager assetManager, String assetName, String target) throws IOException{
         InputStream is= null;
         try {
@@ -56,10 +58,10 @@ public class CopyHelper {
     private static void copyFile(InputStream in, File targetFile) throws IOException {
         OutputStream out = null;
         try {
-            new FileOutputStream(targetFile);
+            out = new FileOutputStream(targetFile);
             byte[] buffer = new byte[1024];
             int read;
-            while ((read = in.read(buffer)) != -1) {
+            while ((read = in.read(buffer)) > 0) {
                 out.write(buffer, 0, read);
             }
         } finally {

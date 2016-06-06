@@ -32,7 +32,7 @@ public class Metos3d extends AsyncTask<Void, Void, String>{
 
         this.context = c;
         this.resultView = tv;
-        pathToExe = c.getFilesDir().getPath()+"/"+nameOfExe;
+        pathToExe = c.getFilesDir().getAbsolutePath()+"/"+nameOfExe;
     }
 
     @Override
@@ -44,10 +44,11 @@ public class Metos3d extends AsyncTask<Void, Void, String>{
     protected String doInBackground(Void... params) {
         String pathToExeInM3dFolder = pathToM3d+"/"+nameOfExe;
         File exe = new File(pathToExe);
-        if(!(exe.isFile())) {
+        if(!(exe.exists())) {
+            Log.d("HIER", "hiii creating file");
             // Copy exe to private storage. This is necessary for having permission to make it executable!
             try {
-                CopyHelper.copyFile(new File(pathToM3d+"/"+nameOfExe), exe);
+                CopyHelper.copyFile(new File(pathToExeInM3dFolder), exe);
             } catch(IOException e) {
                 return e.toString();
             }
@@ -56,7 +57,7 @@ public class Metos3d extends AsyncTask<Void, Void, String>{
             }
         }
 
-        Log.d("HIER", ""+exe.isFile());
+        Log.d("HIER", ""+exe.isFile()+exe.canExecute()+exe.length());
 
         return executeCmd(pathToExe+" "+pathToOptionFile, pathToM3d);
     }
