@@ -6,15 +6,10 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.TextView;
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 public class Metos3d extends AsyncTask<Void, Void, String>{
     final String pathToM3d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/Metos3d";
@@ -28,16 +23,18 @@ public class Metos3d extends AsyncTask<Void, Void, String>{
 
     public Metos3d(Context c, TextView tv) throws ExceptionMetos3dNotInDownloads {
         if(!(new File(pathToM3d)).isDirectory())
-            throw new ExceptionMetos3dNotInDownloads(pathToM3d + " does not exist");
+            throw new ExceptionMetos3dNotInDownloads("\n\n"+pathToM3d + " does not exist");
 
         this.context = c;
         this.resultView = tv;
+        // private App storage. There we have permission to make it executable!
         pathToExe = c.getFilesDir().getAbsolutePath()+"/"+nameOfExe;
     }
 
     @Override
     protected void onPreExecute() {
         this.progressDialog = ProgressDialog.show(this.context, "", "Calculating N-DOP");
+        System.gc();
     }
 
     @Override
@@ -45,8 +42,6 @@ public class Metos3d extends AsyncTask<Void, Void, String>{
         String pathToExeInM3dFolder = pathToM3d+"/"+nameOfExe;
         File exe = new File(pathToExe);
         if(!(exe.exists())) {
-            Log.d("HIER", "hiii creating file");
-            // Copy exe to private storage. This is necessary for having permission to make it executable!
             try {
                 CopyHelper.copyFile(new File(pathToExeInM3dFolder), exe);
             } catch(IOException e) {
@@ -57,14 +52,13 @@ public class Metos3d extends AsyncTask<Void, Void, String>{
             }
         }
 
-        Log.d("HIER", ""+exe.isFile()+exe.canExecute()+exe.length());
-
         return executeCmd(pathToExe+" "+pathToOptionFile, pathToM3d);
     }
 
     @Override
     protected void onPostExecute(String result) {
         this.resultView.setText(result);
+        System.gc();
         this.progressDialog.dismiss();
     }
 
@@ -88,7 +82,7 @@ public class Metos3d extends AsyncTask<Void, Void, String>{
 
             p.waitFor(); // That's ok because we are in an AsyncTask
         }
-        catch(Exception e) {
+        catch(Exception e) { // IOException and InterruptedException
             result.append("\n"+e.toString()+"\n");
         }
 

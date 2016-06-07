@@ -13,8 +13,6 @@
     <ScrollView android:id="@+id/textAreaScroller"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_x="0px"
-        android:layout_y="25px"
         android:scrollbars="vertical">
         <TextView android:id="@+id/tv"
             android:layout_width="fill_parent"
