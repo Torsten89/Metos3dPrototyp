@@ -50,8 +50,10 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
                 String pathToExeInM3dFolder = pathToM3d + "/" + nameOfExe;
                 CopyHelper.copyFile(new File(pathToExeInM3dFolder), exe);
             }
-            if(optionFileChanged)
+            if(optionFileChanged) {
                 parser.writeBackOpitionFile();
+                optionFileChanged=false;
+            }
         } catch (IOException e) {
             return e.toString();
         }
@@ -75,7 +77,7 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
         StringBuffer result = new StringBuffer();
         try {
             String line;
-            Process p = Runtime.getRuntime().exec("/system/bin/sh "+command, null, new File(workingDir));
+            Process p = Runtime.getRuntime().exec(command, null, new File(workingDir));
             BufferedReader terminalOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader errorStream = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
