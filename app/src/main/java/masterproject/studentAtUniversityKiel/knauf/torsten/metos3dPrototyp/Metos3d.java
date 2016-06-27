@@ -62,7 +62,7 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
         }
 
         Log.d("HIER", "before exec");
-        return executeCmd(pathToExe + " " + pathToOptionFile, pathToM3d);
+        return executeCmd(pathToExe, pathToOptionFile, pathToM3d);
     }
 
     @Override
@@ -73,11 +73,17 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
         this.progressDialog.dismiss();
     }
 
-    private String executeCmd(String command, String workingDir) {
+    private String executeCmd(String command, String option, String workingDir) {
         StringBuffer result = new StringBuffer();
-        try {
+        Process p=null;
+        try { //p = Runtime.getRuntime().exec(command, null, new File(workingDir));
+            String[] command_ary={command, option};
+            ProcessBuilder pb = new ProcessBuilder(command_ary);
+            pb.redirectErrorStream(true);
+            pb.directory(new File(workingDir));
+            p = pb.start();
+
             String line;
-            Process p = Runtime.getRuntime().exec(command, null, new File(workingDir));
             BufferedReader terminalOutput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader errorStream = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
@@ -90,11 +96,13 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
                 result.append("_myError_: " + line + "\n");
             }
             errorStream.close();
-            Log.d("HIER", "before wait");
+
             p.waitFor(); // That's ok because we are in an AsyncTask
-            Log.d("HIER", "after wait");
         } catch (Exception e) { // IOException and InterruptedException
             result.append("\n" + e.toString() + "\n");
+        } finally {
+            if(p != null)
+                p.destroy();
         }
 
         return result.toString();
