@@ -6,15 +6,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.PopupMenu;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -26,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     TextView resultView;
     Activity thisActivity;
     Boolean optionFileChanged;
-    Metos3dOptionFileParser parser;
+    Metos3dOptionFileParser optionFileParser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
         this.resultView = (TextView) super.findViewById(R.id.tv);
         this.setupOptionButton();
         this.setupStartButton();
-
     }
 
     private void setupOptionButton() {
@@ -46,24 +41,24 @@ public class MainActivity extends AppCompatActivity {
         this.optionButton.setOnClickListener(new View.OnClickListener() {
              public void onClick(View v) {
                  try {
-                     if(parser==null)
-                        parser = new Metos3dOptionFileParser(Metos3d.pathToOptionFile);
+                     if(optionFileParser == null)
+                        optionFileParser = new Metos3dOptionFileParser(Metos3d.pathToOptionFile);
                  } catch(IOException e) {
                      setErrorText(resultView, e.toString());
                      return;
                  }
 
                  final PopupMenu menu= new PopupMenu(thisActivity, optionButton);
-                 for(Map.Entry<String, String> e : parser.getEntries().entrySet()) {
+                 for(Map.Entry<String, String> e : optionFileParser.getEntries().entrySet()) {
                      menu.getMenu().add(e.getKey()+" "+e.getValue());
                  }
 
                  menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                      @Override
                      public boolean onMenuItemClick(MenuItem item) {
-                         menu.show(); // menu disappears per default on click even if returning false
+                         menu.show(); // menu disappears per default on click even if returning false (what it shouldn't after API description)
                          String line = item.getTitle().toString();
-                         createEditDialog(item, parser, parser.getKey(line), parser.getValue(line)).show();
+                         createEditDialog(item, optionFileParser, optionFileParser.getKey(line), optionFileParser.getValue(line)).show();
                          return true; // meaning event is handled
                      }
                  });
@@ -101,9 +96,26 @@ public class MainActivity extends AppCompatActivity {
         this.startButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 try {
-                    (new Metos3d(thisActivity, resultView, optionFileChanged, parser)).execute();
+                    (new Metos3d(thisActivity, resultView, optionFileChanged, optionFileParser)).execute();
                 } catch (ExceptionMetos3dNotInDownloads e) {
-                    setErrorText(resultView, e.toString() + "\n\n Please put the folder there and restart this App");
+                    setErrorText(resultView, e.toString()+"\n\n Please put the full metos3d folder there");
+                    /*
+                    *** Not yet supported ***
+                    AlertDialog.Builder alert = new AlertDialog.Builder(thisActivity);
+                    alert.setTitle(e.toString());
+                    alert.setMessage("Do you want to download it? Please note that it is bigger than 1GB.");
+                    alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            URL[] urls={}; // Have to be prepared by one server
+                            (new DownloadFilesTask(thisActivity, urls)).execute();
+                        }
+                    });
+                    alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // do nothing
+                        }
+                    });;
+                    */
                 }
             }
         });
@@ -111,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setErrorText(TextView tv, String error) {
         tv.setTextColor(Color.RED);
-        tv.setText(error + "\n\n Please put the folder there and restart this App");
+        tv.setText(error);
         tv.setTextColor(Color.BLACK);
     }
 }

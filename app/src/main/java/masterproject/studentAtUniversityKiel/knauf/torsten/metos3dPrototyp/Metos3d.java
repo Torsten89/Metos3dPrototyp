@@ -14,8 +14,9 @@ import java.io.InputStreamReader;
 
 public class Metos3d extends AsyncTask<Void, Void, String> {
     static final String pathToM3d = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/Metos3d";
-    public static final String pathToOptionFile = pathToM3d + "/model/N-DOP/option/test.N-DOP.option.txt";
-    final String nameOfExe = "metos3d-simpack-N-DOP.exe";
+    private static final String MODEL = "NULL";
+    public static final String pathToOptionFile = pathToM3d + "/model/"+MODEL+"/option/test."+MODEL+".option.txt";
+    final String nameOfExe = "metos3d-simpack-"+MODEL+".exe";
     final String pathToExe;
 
     Context context;
@@ -38,7 +39,7 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        this.progressDialog = ProgressDialog.show(this.context, "", "Calculating N-DOP");
+        this.progressDialog = ProgressDialog.show(this.context, "", "Calculating");
         System.gc();
     }
 
@@ -48,7 +49,7 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
         try {
             if (!(exe.exists())) {
                 String pathToExeInM3dFolder = pathToM3d + "/" + nameOfExe;
-                CopyHelper.copyFile(new File(pathToExeInM3dFolder), exe);
+                FileHelper.copyFile(new File(pathToExeInM3dFolder), exe);
             }
             if(optionFileChanged) {
                 parser.writeBackOpitionFile();
@@ -62,7 +63,13 @@ public class Metos3d extends AsyncTask<Void, Void, String> {
         }
 
         Log.d("HIER", "before exec");
-        return executeCmd(pathToExe, pathToOptionFile, pathToM3d);
+        String result = "unset";
+        try {
+            result = executeCmd(pathToExe, pathToOptionFile, pathToM3d);
+        } catch (Exception e) {
+            result = "executeCmd-catch: "+e.toString();
+        }
+        return result;
     }
 
     @Override

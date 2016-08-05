@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class CopyHelper {
+public class FileHelper {
 
     public static void copyFile(File src, File target) throws IOException {
         if(!src.isFile())

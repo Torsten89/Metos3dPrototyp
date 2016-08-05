@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "masterproject.student_at_university_kiel.knauf.torsten.metos3dPrototyp"
+        applicationId "masterproject.studentAtUniversityKiel.knauf.torsten.metos3dPrototyp"
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
