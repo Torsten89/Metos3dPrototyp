@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="js/myW3data.js"></script> 
+	</head>
+	
+	<body onload="myW3IncludeHTMLIndex();">
+		<div w3-include-html="navigationbar.html"></div>
+		
+		<div id="content">
+			<h2>Compiling of Android/Java vs. C</h2>
+			Growing up with Java and Eclipse I never wondered myself about compilation processes.
+			The only thing I did, was pressing the launch-button in Eclipse and be delighted by the result of my program.
+			So this article is about how machines comes to the joy of understanding our source code. It covers Java, Android and C.<br>
+			
+			<h4>Java<a href="http://openbook.rheinwerk-verlag.de/javainsel/javainsel_01_002.html" class="footnote"><sup>1</sup></a><span id="Java" class="anchor"/></h4>
+			Java source code is compiled into Bytecode. The Bytecode gets executed by a Runtime Interpreter in a Java Virtual Machine (JVM).
+			A JVM is build upon an imaginary processor, which communicates and translates between the Bytecode, the operation system (os) and it's hardware,
+			on which it should run.
+			<p/>
+			<img src="pictures/compiling/java_compilation.png" alt="Java compilation">
+			
+			<p>This has the advantage, that the compilation process of source code is independent of the underlying os and hardware.
+			But it is slower than running machine code directly, because the work of the hardware (e.g. to decode and execute instructions)
+			has to be repeated in the JVM.</p>
+			<p>To ease this issue, the JVM has a Just In Time compiler (JIT). When some Bytecode is executed again and again (a so called hotspot),
+			   the JIT can compile Bytecode to machine code for the underlying os and its hardware during runtime.
+			</p>
+			
+			<img src="pictures/compiling/JIT_compiler.png" alt="JIT-compiler"/>
+			
+			<p>So the advantage of portability is obtained and the disadvantage of Bytecode is eased.</p>
+			
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->			
+			<h4>Android<a href="http://developer.android.com" class="footnote"><sup>2</sup></a><span id="Android" class="anchor"/></h4>
+			The basics of Android Apps will not be discussed here. Please use the <a href="http://developer.android.com/training/index.html">offical developer guide</a> for that.
+			
+			<p>Basically Android Apps (apk) are based on Java. But Android has a Davlik Virtual Machine instead of a JVM.
+			   Funnily Java source code is translated into Java Bytecode first and then the Java Bytecode is translated into Dalvik Bytecode.
+			   But packing an apk is more than compiling Java source code. Below is a picture, which gives an overview. Details are <a href="http://developer.android.com/sdk/installing/studio-build.html">here</a>.
+			</p>
+			
+			<figure>
+				<img src="http://developer.android.com/images/build.png" alt="packing an apk"/>
+				<figcaption>(Source: <a href="https://developer.android.com/studio/build/index.html">https://developer.android.com/studio/build/index.html</a>, dated: 17.05.2016)</figcaption>
+			</figure>
+			<p>Android uses <a href="http://developer.android.com/tools/building/plugin-for-gradle.html"><b>Gradle</b></a> as build toolkit for packing the apk.
+			   Gradle can be compared to the GNU Build System. Dependencies of the project and custom build logic can be managed by it. Its four main tasks are:
+			</p>
+			<ul>
+				<li><i>assemble</i>: Builds project output</li>
+				<li><i>check</i>: Runs all kind of tests</li>
+				<li><i>run</i>: Runs <i>assemble</i> and <i>check</i></li>
+				<li><i>clean</i>: Cleans</li>
+			</ul>
+			<p>For running correctly the build system assumes sensible defaults for the project structure and other build options, which can be customized.
+			   The build system is configured in a <i>build.gradle file</i>. Please refer to <a href="http://developer.android.com/tools/building/plugin-for-gradle.html">Android Plugin for Gradle</a> for more information.
+			</p>
+			
+			
+<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->			
+			<h4>C<a href="http://althing.cs.dartmouth.edu/local/www.acm.uiuc.edu/sigmil/RevEng/ch02.html" class="footnote"><sup>3</sup></a><span id="C" class="anchor"/></h4>
+			<table>
+				<tr>
+					<td><b>C does not have the concept of a virtual machine.</b> First a preprocessor runs over the source code. It is basically a substitution engine,
+						which copies include-directives and replaces macros in the source code. Second the source code is parsed and translated into Assembler.
+						<b>This step is platform-dependent</b>, because Assembler code is different for different platforms. Third the Assembler code is translated into machine code.
+						Finally a linker puts everything together to one program. There are three different types of linker.
+						<ul>
+							<li>A <i>Static Linker</i> copies every used library into the program.</li>
+							<li>When a <i>Dynamic Linker</i> is used, the program tells the underlying os during its load time, that it needs a library.
+								Than the os shares the address of the library with the program. That way the library has only to exists once, which among others is nice for memory reasons.</li>
+							<li>While the first two Linker do their job during compile time, a <i>Runtime Linker</i> can request and load a library dynamically during runtime.</li>
+						</ul>
+						All these steps, specially configuring the necessary platform-dependent options, are usually automated in a <a href="makeBuild.html"><i>Make</i> Build System</a>.
+					</td>
+					<td><img src="pictures/compiling/C_compilation.png" alt="C compilation"/></td>
+				</tr>
+			</table>
+			
+			<!-- ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ -->			
+			<h3>Conclusion<span id="Conclusion" class="anchor"/></h3>
+			Because Java and Android programs are executed in a virtual machine, they can be compiled easily on any device and than shifted to any arbitrary device
+			on which the required virtual machine is installed.
+			
+			<p>In opposite the compilation process of C is platform-dependent. Due to that a program has to be compiled for a concrete platform!
+			   Normally it is compiled on the target device, because a Make Build System can figure out automatically the required information of the system,
+			   which are needed for compiling. 
+			</p>
+			
+			<p>Noting that Apps aren't compiled on the target platform, <b>integrating C into an App is not as easy as someone may think in the first place. 
+			   The Java part is compiled easily against a well known virtual machine. But for compiling the C part, specific target platform information has to be provided.</b>
+			</p>
+			
+		</div>
+	</body>
+</html>
