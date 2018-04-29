@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/popup.css">
+		<script src="js/popup.js"></script> 
+		<script src="js/myW3data.js"></script>
+	</head>
+	
+	<body onload="myW3IncludeHTMLIndex();">
+		<div w3-include-html="navigationbar.html"></div>
+		
+		<div id="content">
+			<h2>Why using C with Android?</h2>
+			<p>Android uses a Virtual Java Machine (Dalvik) and all APIs like GUI-elements or camera are provided through Java.
+			   Android states itself, that using the NDK for native C support is not worth the additional complexity in most cases,
+			   beside the following two exceptions.<a href="http://developer.android.com/ndk/guides/index.html" class="footnote"><sup>1</sup></a>
+			</p>
+			
+			<h4>1. Speed Up with C</h4>
+			<a href="http://www.androidauthority.com/java-vs-c-app-performance-689081/">Here</a> is a little article about Java vs. C performance on Android.
+			Three different heavy calculating tasks without GUI are done. First a SHA1 hash is calculated 50,000 times. Second the first million primes are calculated using a trial division
+			and third a self written large mathematical function with many multiplication and divisions.
+			<table>
+				<tr>
+					<td><img src="pictures/whyCWithAndroid/Java-vs-C-SHA1.jpg" alt="Java-vs-C-SHA1" height="236" width="420" onclick="showPopup('speedUp1')"/>
+						<div id="speedUp1" class="popupHidden"><img src="pictures/whyCWithAndroid/Java-vs-C-SHA1.jpg" alt="Java-vs-C-SHA1"/></div>
+					</td>
+					<td><img src="pictures/whyCWithAndroid/Java-vs-C-primes.jpg" alt="Java-vs-C-primes" height="236" width="420" onclick="showPopup('speedUp2')"/>
+						<div id="speedUp2" class="popupHidden"><img src="pictures/whyCWithAndroid/Java-vs-C-primes.jpg" alt="Java-vs-C-primes"/></div>
+					</td>
+					<td><img src="pictures/whyCWithAndroid/Java-vs-C-maththings.jpg" alt="Java-vs-C-maththings" height="236" width="420" onclick="showPopup('speedUp3')"/>
+						<div id="speedUp3" class="popupHidden"><img src="pictures/whyCWithAndroid/Java-vs-C-maththings.jpg" alt="Java-vs-C-maththings"/></div>
+					</td>
+				</tr>
+			</table>
+			<figure>
+				<figcaption>(Source: <a href="http://www.androidauthority.com/java-vs-c-app-performance-689081/">http://www.androidauthority.com/java-vs-c-app-performance-689081/</a>, dated: 17.05.2016)</figcaption>
+			</figure>
+	
+			<p>The reasons for Java being slower are stated as following:</p>
+			<ul>
+				<li>Java is run in a virtual machine. You can not run a virtual machine for free.</li>
+				<li>Java Apps are compiled to the virtual machine and therefore have to be translated during runtime to native machine code, which is not for free either.</li>
+				<li>Java uses automated memory management, which is done through the garbage collector. And guess what - a run of the garbage collector is of course also not for free.</li>
+			</ul>
+			
+			<p>The surprising event, that one device was faster with Java than with C with the mathematical function is probably only due to the fact,
+			   that the Java compiler was lucky to find a really good optimization. Beside, no objects were created in the function, so the garbage collector was for free this time.
+			</p>
+			<p>But you can see, that the gap between Java and C becomes smaller with new Android versions. Android is making its Dalvik Virtual Machine faster
+			   and since Android 5.0 it is replaced by an Android Runtime, which does ahead-of-time compilation (the Bytecode of an App is translated into machine code
+			   during the installation on a device). Doing two different compilation processes has of course a probability of producing a not as efficient translation than one,
+			   but the third disadvantage becomes much smaller. <b>Nevertheless native C programs will always be faster
+			   than Java programs in general</b>.
+			</p>
+			
+			<h4>2. Source Code reusability</h4>
+			I have written my <a href="files/Refaktorisierung%20eines%20Smartphone-basierten%20Content%20Management%20Systems.pdf">Bachelor-thesis</a> about good source code.
+			<a href="http://c2.com/cgi/wiki?DontRepeatYourself">DRY</a> is one of the most important principle of programming for good source code for many reasons:
+			<ul>
+				<li>Doing things again and again is expensive.</li>
+				<li>Each time you do something, you can make a mistake.</li>
+				<li>When you have done one thing many times and you want to change it, you have to change it many times.
+					As you can see in the first two points, this is expansive and error prone.</li>
+				<li><b>...</b></li>
+			</ul>
+			
+			<br>
+			<p><b>So, when you already have a program, you don't want to rewrite it from scratch in a new programming language!</b>
+			   In our case, the numeric core of Metos3d, which does by the way <b>heavy calculations</b>,  has almost <i title="run 'find . -name '*.[ch]' | xargs wc -l' in metos3d/simpack/src">3,000</i> lines of code and PETSc has to be crossed compiled anyway.
+			   Otherwise even a new Java toolkit for solving non-linear equations has to be found for android implementation. So it would definitely be nice to
+			   cross-compile the current version, special in mind of future changes and development.
+			</p>
+		</div>
+		 
+	</body>
+</html>
